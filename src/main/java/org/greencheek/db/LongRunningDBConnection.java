@@ -120,11 +120,11 @@ public class LongRunningDBConnection {
             st = con.createStatement();
             System.out.println("Executing Query");
             System.out.flush();
-            rs = st.executeQuery("select * from user");
+            rs = st.executeQuery("select user,host from information_schema.processlist");
             int cnt = 1;
             while (rs.next()) {
-                System.out.println((cnt++)+". Host:" +rs.getString("Host")+
-                        " User:"+rs.getString("User"));
+                System.out.println((cnt++)+". Host:" +rs.getString("host")+
+                        " User:"+rs.getString("user"));
                 System.out.flush();
             }
 

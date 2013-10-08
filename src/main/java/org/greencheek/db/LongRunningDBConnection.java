@@ -115,6 +115,8 @@ public class LongRunningDBConnection {
             System.out.println("Obtaining Connection");
             System.out.flush();
             con = dataSource.getConnection();
+            con.setAutoCommit(false);
+            con.setReadOnly(true);
             System.out.println("Creating Statement");
             System.out.flush();
             st = con.createStatement();
@@ -130,6 +132,13 @@ public class LongRunningDBConnection {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            try {
+                con.rollback();
+            } catch (Exception ce) {
+                System.err.println("Error Rolling back transaction");
+                System.err.flush();
+                ce.printStackTrace();
+            }
         } finally {
             if(rs!=null) {
                 try {
@@ -147,7 +156,17 @@ public class LongRunningDBConnection {
                     e.printStackTrace();
                 }
             }
+
+            try {
+                con.commit();
+            } catch(Exception ce) {
+                System.err.println("Error Comming transaction");
+                System.err.flush();
+                ce.printStackTrace();
+            }
+
             if (con!=null) try {con.close();}catch (Exception ignore) {}
+
         }
     }
 }
